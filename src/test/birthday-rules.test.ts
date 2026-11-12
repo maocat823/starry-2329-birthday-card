@@ -110,8 +110,8 @@ describe("birthday card rules", () => {
     expect(mixHsl(gold, gold, 0.5)).toEqual(gold);
   });
 
-  it("fills the heart with twenty blessing popups", () => {
-    expect(cake.heartBlessings).toHaveLength(CAKE_HEARTS.count);
+  it("lines the starlight heart with twenty holographic alerts", () => {
+    expect(cake.holoWindows).toHaveLength(CAKE_HEARTS.count);
     expect(CAKE_HEARTS.count).toBeGreaterThanOrEqual(20);
     expect(CAKE_HEARTS.count).toBeLessThanOrEqual(30);
   });

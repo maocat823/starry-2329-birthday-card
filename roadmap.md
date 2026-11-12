@@ -12,4 +12,4 @@
 - [x] Ode to Joy music box, auto music when the cake arrives, manual fullscreen, circular icon-only music toggle
 - [x] Replace the chalkboard background with the starry-sky artwork (desktop + portrait mobile WebP)
 - [x] Rebuild the intro as a full-bleed "大哥，生日快乐！" poster with the delivery line
-- [x] Heart-trajectory blessing popups over the cake after the particle text settles
+- [x] Holographic star-alert windows along a starlight heart after the particle text settles
