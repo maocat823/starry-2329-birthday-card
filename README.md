@@ -34,7 +34,7 @@
 
 项目从“能不能把一张生日贺卡做得像一场小电影”出发：星空底、粉笔字、纸张质感、粒子火焰、金色心形轨迹、深蓝毛玻璃的“宇宙系统提示”，以及一段用 Web Audio 合成的《欢乐颂》音乐盒。它不追求通用模板，只追求把一句生日快乐讲得足够认真。
 
-- **在线预览**：https://starry-2329-birthday-card.lovable.app
+- **在线预览**：https://oyyf-birthday-card.lovable.app
 - **仓库**：https://github.com/maocat823/starry-2329-birthday-card
 - **状态**：个人项目，持续打磨；当前 14 个测试通过
 
