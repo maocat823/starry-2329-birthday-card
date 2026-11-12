@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://starry-2329-birthday-card.lovable.app"><strong>在线预览</strong></a>
+  <a href="https://oyyf-birthday-card.lovable.app"><strong>在线预览</strong></a>
   ·
   <a href="https://github.com/maocat823/starry-2329-birthday-card">GitHub</a>
 </p>
