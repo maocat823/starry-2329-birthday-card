@@ -29,10 +29,8 @@ export function BirthdayCard() {
   const next = () => {
     const target = Math.min(step + 1, TOTAL - 1);
     if (target === TOTAL - 1 && target !== step) {
-      // The click is the user gesture that lets the song and native fullscreen start.
+      // The click is the user gesture that lets the cake-page song start automatically.
       void music.play();
-      const request = document.documentElement.requestFullscreen?.();
-      if (request) request.catch(() => undefined);
     }
     goTo(target);
   };
@@ -72,7 +70,7 @@ export function BirthdayCard() {
           leaving ? "opacity-0" : "opacity-100",
         )}
       >
-        <div key={step} className={step === TOTAL - 1 ? undefined : "animate-page-in"}>
+        <div key={step} className="animate-page-in">
           {step === 0 && <IntroPage onNext={next} />}
           {step === 1 && <WishPage onNext={next} />}
           {step === 2 && <RoutePage onNext={next} />}

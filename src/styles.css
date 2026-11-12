@@ -185,6 +185,15 @@
   text-shadow: var(--chalk-glow);
 }
 
+/* Gold counterpart used for the "生日快乐" half of the greeting. */
+@utility chalk-text-gold {
+  color: var(--chalk-gold);
+  text-shadow:
+    0 0 1px oklch(0.955 0.012 95 / 0.7),
+    0 0 22px oklch(0.8 0.1 84 / 0.45),
+    0 2px 12px oklch(0.08 0.03 275 / 0.6);
+}
+
 @utility paper-note {
   position: relative;
   background-color: var(--paper);

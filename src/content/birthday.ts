@@ -1,16 +1,10 @@
-// All copy for the card lives here. Address pair is always 大哥 (birthday girl) / 小弟 (sender).
+// All copy for the card lives here. Address pair is 大哥 (birthday girl) / 小弟 (小毛, sender).
 
 export const intro = {
-  titleTop: "宁远一中 2329 班 ·",
-  titleMain: "小组内部通知",
-  titleTail: "（大学版）",
-  lines: [
-    { label: "收件人", value: "湖南财经学院 欧阳俞方同学" },
-    { label: "寄件人", value: "长沙工业学院 某小弟" },
-    { label: "事由", value: "大哥的生日排面，跨校准时送达。" },
-  ],
-  cta: "大哥，点此签收你的生日排面",
-  signed: "签收成功 · 排面已到账",
+  greetingLead: "大哥，",
+  greetingMain: "生日快乐！",
+  delivery: "宁远一中 2329 班小毛（MJZ），跨校准时送达。",
+  next: "点此继续",
 };
 
 export const wish = {

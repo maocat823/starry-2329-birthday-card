@@ -2,9 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Maximize2, Minimize2, RotateCcw } from "lucide-react";
 import { ChalkTitle } from "./ChalkTitle";
-import { ChalkHeart } from "./ChalkHeart";
 import { RemarkCard } from "./RemarkCard";
-import { HeartBurst } from "./HeartBurst";
 import { ParticleCakeStage, type CakeStageHandle } from "./ParticleCakeStage";
 import { CAKE_TIMELINE } from "@/lib/cake-config";
 import { cake, intro, route, wish } from "@/content/birthday";
@@ -27,78 +25,39 @@ function NextButton({ onClick, children = "下一页" }: { onClick: () => void; 
 
 export function IntroPage({ onNext }: PageProps) {
   const reduced = useReducedMotion();
-  const [burst, setBurst] = useState<{ x: number; y: number; id: number } | null>(null);
-  const [signed, setSigned] = useState(false);
-  const [showNext, setShowNext] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  useEffect(() => () => clearTimeout(timer.current), []);
-
-  const sign = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    if (!reduced) setBurst({ x: r.left + r.width / 2, y: r.top + r.height / 2, id: Date.now() });
-    setSigned(true);
-    timer.current = setTimeout(() => setShowNext(true), reduced ? 0 : 900);
-  };
-  const clearBurst = useCallback(() => setBurst(null), []);
 
   return (
-    <section className="flex min-h-[calc(100dvh-7rem)] flex-col items-center justify-center gap-8 text-center">
-      <p className="chalk-text font-chalk text-sm tracking-[0.3em] opacity-70">NOTICE · 内部文件</p>
+    <section className="flex min-h-[calc(100dvh-9rem)] flex-col items-center justify-center gap-7 text-center">
+      <motion.h1
+        initial={reduced ? false : { opacity: 0, y: 26, scale: 0.94, rotate: -2.5 }}
+        animate={{ opacity: 1, y: 0, scale: 1, rotate: -1 }}
+        transition={{ duration: reduced ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="chalk-text font-hand font-bold leading-[0.95] text-[clamp(2.9rem,16.5vw,10rem)]"
+      >
+        <span className="block">{intro.greetingLead}</span>
+        <span className="chalk-text-gold block">{intro.greetingMain}</span>
+      </motion.h1>
+
+      <motion.p
+        initial={reduced ? false : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: reduced ? 0 : 0.8,
+          delay: reduced ? 0 : 0.22,
+          ease: "easeOut",
+        }}
+        className="chalk-text text-balance mx-auto max-w-[26rem] px-2 font-chalk text-[clamp(0.95rem,2.4vw,1.2rem)] leading-relaxed opacity-90"
+      >
+        {intro.delivery}
+      </motion.p>
+
       <motion.div
         initial={reduced ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduced ? 0 : 0.8, ease: "easeOut" }}
+        transition={{ duration: reduced ? 0 : 0.6, delay: reduced ? 0 : 0.42, ease: "easeOut" }}
       >
-        <ChalkTitle className="text-[2.1rem] sm:text-5xl md:text-6xl">
-          <span className="block text-2xl text-chalk-dim sm:text-3xl">{intro.titleTop}</span>
-          <span className="mt-2 block">
-            <span className="chalk-underline">{intro.titleMain}</span>
-          </span>
-          <span className="mt-1 block text-chalk-gold">{intro.titleTail}</span>
-        </ChalkTitle>
+        <NextButton onClick={onNext}>{intro.next}</NextButton>
       </motion.div>
-
-      <div className="paper-note w-full max-w-sm -rotate-1 px-5 pb-5 pt-7 text-left">
-        <span className="absolute -right-2 -top-3 rotate-12 rounded-sm border-2 border-stamp px-2 py-0.5 font-chalk text-xs text-stamp">
-          仅限大哥本人拆阅
-        </span>
-        <dl className="space-y-2 text-sm leading-relaxed">
-          {intro.lines.map((l) => (
-            <div key={l.label} className="flex gap-2">
-              <dt className="shrink-0 font-chalk text-stamp">{l.label}：</dt>
-              <dd>{l.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-
-      <div className="flex flex-col items-center gap-4">
-        <button
-          type="button"
-          onClick={sign}
-          disabled={signed}
-          className="chalk-btn chalk-btn-solid px-7 text-lg"
-        >
-          <ChalkHeart className="w-5 text-stamp" />
-          {signed ? intro.signed : intro.cta}
-        </button>
-        {showNext && <NextButton onClick={onNext} />}
-      </div>
-
-      {burst && (
-        <HeartBurst
-          key={burst.id}
-          x={burst.x}
-          y={burst.y}
-          count={14}
-          spread={170}
-          fall={80}
-          duration={[1.3, 1.9]}
-          size={[18, 30]}
-          onDone={clearBurst}
-        />
-      )}
     </section>
   );
 }
@@ -262,9 +221,9 @@ export function CakePage() {
   const [blown, setBlown] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
   const [busy, setBusy] = useState(false);
-  // The cake arrives already in recording mode; the navigation click requests native
-  // fullscreen, and this overlay guarantees the same frame when the browser refuses it.
-  const [full, setFull] = useState(true);
+  // Fullscreen is opt-in: the cake page opens in the normal page layout, and the button
+  // on the stage (or Esc) toggles recording mode.
+  const [full, setFull] = useState(false);
   const [chrome, setChrome] = useState(true);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const chromeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);

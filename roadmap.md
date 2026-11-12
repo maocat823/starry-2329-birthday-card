@@ -9,5 +9,6 @@
 - [x] Soft glow around the cake; explosion colors layer from warm gold out to red, violet and blue
 - [x] Full-screen warm dust layer on the entry page (3000 points, halved on phones) with a Framer Motion chalk-fade title
 - [x] Three-tier particle sculpture with five live candle plumes, warm palette and UnrealBloom glow
-- [x] Ode to Joy music box, auto fullscreen + music when the cake arrives, circular icon-only music toggle
+- [x] Ode to Joy music box, auto music when the cake arrives, manual fullscreen, circular icon-only music toggle
 - [x] Replace the chalkboard background with the starry-sky artwork (desktop + portrait mobile WebP)
+- [x] Rebuild the intro as a full-bleed "大哥，生日快乐！" poster with the delivery line

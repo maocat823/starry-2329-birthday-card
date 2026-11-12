@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BirthdayCard } from "@/components/birthday/BirthdayCard";
 
-const TITLE = "大哥，生日快乐 · 2329班小组内部通知（大学版）";
-const DESC = "宁远一中2329班小组内部通知：小弟从长沙工业学院跨校送达大哥的生日排面。";
+const TITLE = "大哥，生日快乐！";
+const DESC = "宁远一中 2329 班小毛（MJZ），跨校准时送达。";
 
 export const Route = createFileRoute("/")({
   head: () => ({
