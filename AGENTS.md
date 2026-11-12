@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- The card is one route (`/`) with in-memory step state in `BirthdayCard`; it is a private sequential flow, so steps are not separate URLs.
+- All card copy lives in `src/content/birthday.ts`; components read from it instead of hardcoding text.
+- p5.js is dynamically imported inside `useEffect` (CakeCanvas) because it touches `window` and must never run during SSR.
+- Canvas drawing uses literal rgb colors (canvas can't read Tailwind tokens); DOM styling uses only tokens/utilities from `src/styles.css`.
+- Music is synthesized with Web Audio (`src/lib/birthday-song.ts`) so no audio file or copyrighted track is shipped.
