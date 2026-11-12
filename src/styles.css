@@ -52,6 +52,7 @@
   --color-chalk-dim: var(--chalk-dim);
   --color-chalk-red: var(--chalk-red);
   --color-chalk-gold: var(--chalk-gold);
+  --color-cinema: var(--cinema);
   --color-paper: var(--paper);
   --color-paper-alt: var(--paper-alt);
   --color-paper-ink: var(--paper-ink);
@@ -77,6 +78,8 @@
   --paper-ink: oklch(0.27 0.035 160);
   --stamp: oklch(0.52 0.15 28);
   --tape: oklch(0.88 0.05 88 / 0.72);
+  /* fullscreen recording stage: near-black so the additive cake particles pop on camera */
+  --cinema: #0a0a12;
 
   /* shadcn mapping */
   --background: var(--board);
@@ -99,7 +102,8 @@
   --input: oklch(0.955 0.012 95 / 0.3);
   --ring: var(--chalk-gold);
 
-  --shadow-note: 0 1px 0 oklch(0.27 0.035 160 / 0.08), 0 14px 22px -12px oklch(0.12 0.03 165 / 0.75),
+  --shadow-note:
+    0 1px 0 oklch(0.27 0.035 160 / 0.08), 0 14px 22px -12px oklch(0.12 0.03 165 / 0.75),
     0 3px 6px -2px oklch(0.12 0.03 165 / 0.45);
   --chalk-glow: 0 0 1px oklch(0.955 0.012 95 / 0.9), 0 0 8px oklch(0.955 0.012 95 / 0.18);
   --wobble: 255px 16px 225px 16px / 16px 225px 16px 255px;
@@ -150,8 +154,7 @@
 @utility paper-note {
   position: relative;
   background-color: var(--paper);
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3'/><feColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.25  0 0 0 0 0.1  0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3'/><feColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.25  0 0 0 0 0.1  0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
   color: var(--paper-ink);
   border-radius: var(--wobble-soft);
   box-shadow: var(--shadow-note);
@@ -342,8 +345,8 @@
     opacity: var(--op, 0.85);
   }
   100% {
-    transform: translate(calc(-50% + var(--dx2)), calc(-50% + var(--dy) + var(--fall)))
-      scale(0.85) rotate(calc(var(--rot) * -1));
+    transform: translate(calc(-50% + var(--dx2)), calc(-50% + var(--dy) + var(--fall))) scale(0.85)
+      rotate(calc(var(--rot) * -1));
     opacity: 0;
   }
 }
@@ -462,12 +465,20 @@
   }
 }
 
-/* dark pool behind the 3D particle cake so the additive particles read on the board */
-@utility cake-stage {
-  background: radial-gradient(
-    ellipse 62% 58% at 50% 52%,
-    oklch(0.14 0.03 168 / 0.92),
-    oklch(0.18 0.035 166 / 0.55) 55%,
-    transparent 78%
-  );
+/*
+ * Full-screen / recording mode. The stage is a flat near-black (#0a0a12) with only a hint
+ * of the cake's warm glow and a violet rim, so the particles carry the contrast on camera.
+ */
+@utility cinema-stage {
+  background-color: var(--cinema);
+  background-image:
+    radial-gradient(ellipse 62% 48% at 50% 58%, oklch(0.75 0.12 78 / 0.14), transparent 68%),
+    radial-gradient(ellipse 82% 66% at 50% 42%, oklch(0.58 0.14 300 / 0.1), transparent 72%),
+    radial-gradient(ellipse 110% 90% at 50% 116%, oklch(0.24 0.03 280 / 0.5), transparent 70%);
+}
+
+/* Page chrome lives above the cake section in the stacking order; hide it while recording. */
+body[data-cinema="on"] [data-page-chrome] {
+  opacity: 0;
+  pointer-events: none;
 }

@@ -32,6 +32,7 @@ use the editor.
 ## Project rules
 - The card is one route (`/`) with in-memory step state in `BirthdayCard`; it is a private sequential flow, so steps are not separate URLs.
 - All card copy lives in `src/content/birthday.ts`; components read from it instead of hardcoding text.
-- The 3D cake loads Three.js r128 + particle-cake from pinned CDN URLs (with SRI) inside `useEffect` (`particle-cake.ts`), because they need `window` and must never run during SSR; card-specific behavior (flame fade, smoke, fitted text) is a subclass there, not a fork.
+- The 3D cake loads Three.js r128 + particle-cake + OrbitControls + three's postprocessing passes (EffectComposer/RenderPass/UnrealBloomPass) from pinned CDN URLs (with SRI) inside `useEffect` (`particle-cake.ts`), because they need `window` and must never run during SSR; card-specific behavior (three-tier cake, live candle flames, bloom, drag orbit, layered explosion colors, fitted text) is a subclass there, not a fork.
+- Fullscreen recording mode is native fullscreen on `CakePage` with a fixed-overlay fallback for iOS; the cake stage itself stays transparent so the chalkboard shows through, and fullscreen paints the near-black `--cinema` token with the `cinema-stage` utility in `src/styles.css`.
 - Canvas drawing uses literal rgb colors (canvas can't read Tailwind tokens); DOM styling uses only tokens/utilities from `src/styles.css`.
 - Music is synthesized with Web Audio (`src/lib/birthday-song.ts`) so no audio file or copyrighted track is shipped.

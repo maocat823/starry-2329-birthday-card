@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, Mail, RotateCcw } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Mail, Maximize2, Minimize2, RotateCcw } from "lucide-react";
 import { ChalkTitle } from "./ChalkTitle";
 import { ChalkHeart } from "./ChalkHeart";
-import { FlipCard } from "./FlipCard";
 import { RemarkCard } from "./RemarkCard";
 import { HeartBurst } from "./HeartBurst";
 import { ParticleCakeStage, type CakeStageHandle } from "./ParticleCakeStage";
 import { CAKE_TIMELINE } from "@/lib/cake-config";
-import { archive, cake, intro, route, wish } from "@/content/birthday";
+import { cake, intro, route, wish } from "@/content/birthday";
 import { useIsPhone, useReducedMotion } from "@/hooks/use-media";
 import { cycle, heartCount } from "@/lib/hearts";
 import { cn } from "@/lib/utils";
@@ -45,13 +45,19 @@ export function IntroPage({ onNext }: PageProps) {
   return (
     <section className="flex min-h-[calc(100dvh-7rem)] flex-col items-center justify-center gap-8 text-center">
       <p className="chalk-text font-chalk text-sm tracking-[0.3em] opacity-70">NOTICE · 内部文件</p>
-      <ChalkTitle className="text-[2.1rem] sm:text-5xl md:text-6xl">
-        <span className="block text-2xl text-chalk-dim sm:text-3xl">{intro.titleTop}</span>
-        <span className="mt-2 block">
-          <span className="chalk-underline">{intro.titleMain}</span>
-        </span>
-        <span className="mt-1 block text-chalk-gold">{intro.titleTail}</span>
-      </ChalkTitle>
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: reduced ? 0 : 0.8, ease: "easeOut" }}
+      >
+        <ChalkTitle className="text-[2.1rem] sm:text-5xl md:text-6xl">
+          <span className="block text-2xl text-chalk-dim sm:text-3xl">{intro.titleTop}</span>
+          <span className="mt-2 block">
+            <span className="chalk-underline">{intro.titleMain}</span>
+          </span>
+          <span className="mt-1 block text-chalk-gold">{intro.titleTail}</span>
+        </ChalkTitle>
+      </motion.div>
 
       <div className="paper-note w-full max-w-sm -rotate-1 px-5 pb-5 pt-7 text-left">
         <span className="absolute -right-2 -top-3 rotate-12 rounded-sm border-2 border-stamp px-2 py-0.5 font-chalk text-xs text-stamp">
@@ -97,8 +103,7 @@ export function IntroPage({ onNext }: PageProps) {
   );
 }
 
-/* ---------------- 2. 档案 ---------------- */
-
+/* Shared tilts for the remark cards on the letter page. */
 const TILTS: [string, ...string[]] = [
   "-rotate-1",
   "rotate-1",
@@ -107,33 +112,7 @@ const TILTS: [string, ...string[]] = [
   "-rotate-[0.4deg]",
 ];
 
-export function ArchivePage({ onNext }: PageProps) {
-  return (
-    <section className="flex flex-col items-center gap-8">
-      <header className="text-center">
-        <ChalkTitle>{archive.title}</ChalkTitle>
-        <p className="mt-3 text-sm text-chalk-dim">{archive.hint}</p>
-      </header>
-      <div className="grid w-full max-w-3xl grid-cols-1 gap-7 md:grid-cols-2">
-        {archive.cards.map((c, i) => (
-          <FlipCard
-            key={c.front}
-            no={i + 1}
-            front={c.front}
-            back={c.back}
-            className={cn(
-              cycle(TILTS, i),
-              i === archive.cards.length - 1 && "md:col-span-2 md:mx-auto md:max-w-md",
-            )}
-          />
-        ))}
-      </div>
-      <NextButton onClick={onNext} />
-    </section>
-  );
-}
-
-/* ---------------- 3. 祝福 ---------------- */
+/* ---------------- 2. 祝福 ---------------- */
 
 export function WishPage({ onNext }: PageProps) {
   const reduced = useReducedMotion();
@@ -214,7 +193,7 @@ export function WishPage({ onNext }: PageProps) {
   );
 }
 
-/* ---------------- 4. 双校连线 ---------------- */
+/* ---------------- 3. 双校连线 ---------------- */
 
 function Stop({ name, note }: { name: string; note: string }) {
   return (
@@ -274,19 +253,99 @@ export function RoutePage({ onNext }: PageProps) {
   );
 }
 
-/* ---------------- 5. 蛋糕 ---------------- */
+/* ---------------- 4. 蛋糕 ---------------- */
 
 export function CakePage() {
   const reduced = useReducedMotion();
   const stage = useRef<CakeStageHandle>(null);
+  const shell = useRef<HTMLElement>(null);
   const [blown, setBlown] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [full, setFull] = useState(false);
+  const [chrome, setChrome] = useState(true);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const chromeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const msgRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  useEffect(
+    () => () => {
+      timers.current.forEach(clearTimeout);
+      clearTimeout(chromeTimer.current);
+    },
+    [],
+  );
   const later = (fn: () => void, ms: number) => timers.current.push(setTimeout(fn, ms));
+
+  // Keep the overlay in sync with native fullscreen, including Esc and the browser's own UI.
+  useEffect(() => {
+    const sync = () => setFull(document.fullscreenElement === shell.current);
+    document.addEventListener("fullscreenchange", sync);
+    return () => {
+      document.removeEventListener("fullscreenchange", sync);
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
+    };
+  }, []);
+
+  // Recording mode owns the screen: lock the card behind it and hide the page chrome that
+  // lives outside this section (page dots, music chip), which sits above it in the stack.
+  useEffect(() => {
+    if (!full) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.body.dataset["cinema"] = "on";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      delete document.body.dataset["cinema"];
+    };
+  }, [full]);
+
+  const showChrome = useCallback(() => {
+    setChrome(true);
+    clearTimeout(chromeTimer.current);
+    chromeTimer.current = setTimeout(() => setChrome(false), 3200);
+  }, []);
+
+  useEffect(() => {
+    if (!full) {
+      setChrome(true);
+      clearTimeout(chromeTimer.current);
+      return;
+    }
+    showChrome();
+    return () => clearTimeout(chromeTimer.current);
+  }, [full, showChrome]);
+
+  const closeFullscreen = useCallback(async () => {
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // the overlay still covers the screen, so drop it below either way
+      }
+    }
+    setFull(false);
+  }, []);
+
+  useEffect(() => {
+    if (!full) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !document.fullscreenElement) void closeFullscreen();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [full, closeFullscreen]);
+
+  const toggleFullscreen = () => {
+    if (full) {
+      void closeFullscreen();
+      return;
+    }
+    setFull(true);
+    // iPhone has no element fullscreen; the fixed overlay still fills the screen there.
+    const request = shell.current?.requestFullscreen?.();
+    if (request) request.catch(() => undefined);
+  };
 
   const blow = () => {
     setBlown(true);
@@ -318,25 +377,75 @@ export function CakePage() {
   };
 
   return (
-    <section className="flex flex-col items-center gap-6">
-      <ChalkTitle className="text-center">{cake.title}</ChalkTitle>
+    <section
+      ref={shell}
+      onPointerDown={full ? showChrome : undefined}
+      onPointerMove={full ? showChrome : undefined}
+      className={cn(
+        "flex w-full flex-col items-center gap-6",
+        full &&
+          "cinema-stage fixed inset-0 z-[60] justify-center gap-3 overflow-hidden px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom,0px))] pt-[calc(0.75rem_+_env(safe-area-inset-top,0px))]",
+      )}
+    >
+      <ChalkTitle className={cn("text-center", full && "text-2xl sm:text-3xl")}>
+        {cake.title}
+      </ChalkTitle>
 
-      <ParticleCakeStage
-        ref={stage}
-        text={cake.particleText}
-        label={cake.stageLabel}
-        loadingText={cake.loading}
-        errorText={cake.loadError}
-      />
+      <div className={cn("relative w-full", full && "flex min-h-0 flex-1")}>
+        <ParticleCakeStage
+          ref={stage}
+          text={cake.particleText}
+          label={cake.stageLabel}
+          loadingText={cake.loading}
+          errorText={cake.loadError}
+          fullscreen={full}
+        />
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          aria-pressed={full}
+          aria-label={full ? cake.exitFullscreen : cake.fullscreenLabel}
+          className={cn(
+            "chalk-chip absolute right-1 top-1 z-20 transition-opacity duration-500",
+            full
+              ? chrome
+                ? "opacity-70"
+                : "pointer-events-none opacity-0 focus-visible:pointer-events-auto focus-visible:opacity-100"
+              : "opacity-70 hover:opacity-100",
+          )}
+        >
+          {full ? (
+            <Minimize2 className="size-4" aria-hidden="true" />
+          ) : (
+            <Maximize2 className="size-4" aria-hidden="true" />
+          )}
+          <span>{full ? cake.exitFullscreen : cake.fullscreen}</span>
+        </button>
+      </div>
 
       {!blown && !busy && (
-        <button type="button" onClick={blow} className="chalk-btn chalk-btn-solid px-7 text-lg">
-          {cake.cta}
-        </button>
+        <div className="flex flex-col items-center gap-3">
+          {!full && <p className="chalk-text font-chalk text-sm opacity-65">{cake.dragHint}</p>}
+          <button type="button" onClick={blow} className="chalk-btn chalk-btn-solid px-7 text-lg">
+            {cake.cta}
+          </button>
+        </div>
       )}
       {busy && <p className="chalk-text font-chalk text-lg opacity-80">{cake.relit}</p>}
 
-      {showMsg && (
+      {showMsg && full && (
+        <div className="chalk-text flex w-full max-w-2xl animate-page-in flex-col items-center gap-1 text-center">
+          <p className="font-chalk text-3xl text-chalk-gold">{cake.message[0]}</p>
+          {cake.message.slice(1).map((line) => (
+            <p key={line} className="font-chalk text-base leading-relaxed opacity-90">
+              {line}
+            </p>
+          ))}
+          <p className="mt-2 font-chalk text-sm leading-relaxed opacity-70">{cake.footnote}</p>
+        </div>
+      )}
+
+      {showMsg && !full && (
         <div
           ref={msgRef}
           className="flex w-full max-w-md animate-page-in flex-col items-center gap-5"
@@ -356,7 +465,11 @@ export function CakePage() {
       )}
 
       {showMsg && (
-        <button type="button" onClick={replay} className="chalk-btn chalk-btn-quiet mt-6">
+        <button
+          type="button"
+          onClick={replay}
+          className={cn("chalk-btn chalk-btn-quiet", full ? "mt-0" : "mt-6")}
+        >
           <RotateCcw className="size-4" aria-hidden="true" />
           {cake.replay}
         </button>

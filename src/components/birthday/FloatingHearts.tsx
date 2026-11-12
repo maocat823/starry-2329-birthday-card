@@ -23,7 +23,7 @@ type Heart = {
 };
 
 /** Slow, low-opacity chalk hearts drifting down behind the content. */
-export function FloatingHearts({ base, opacity }: { base: number; opacity?: number }) {
+export function FloatingHearts({ base, opacity }: { base: number; opacity?: number | undefined }) {
   const reduced = useReducedMotion();
   const phone = useIsPhone();
   const [hearts, setHearts] = useState<Heart[]>([]);

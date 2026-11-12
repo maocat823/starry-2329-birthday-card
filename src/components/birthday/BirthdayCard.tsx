@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { ArchivePage, CakePage, IntroPage, RoutePage, WishPage } from "./pages";
+import { CakePage, IntroPage, RoutePage, WishPage } from "./pages";
 import { FloatingHearts } from "./FloatingHearts";
 import { MusicToggle } from "./MusicToggle";
+import { ParticleField } from "./ParticleField";
 import { cn } from "@/lib/utils";
 import { CAKE_PAGE_HEART_OPACITY } from "@/lib/hearts";
 
-const TOTAL = 5;
+const TOTAL = 4;
 const FADE_MS = 320;
 
 export function BirthdayCard() {
@@ -28,13 +29,18 @@ export function BirthdayCard() {
   return (
     <div className="relative min-h-dvh">
       <div className="chalkboard fixed inset-0 -z-10" aria-hidden="true" />
+      {step === 0 && <ParticleField />}
       <FloatingHearts
         base={step === TOTAL - 1 ? 18 : 8}
         opacity={step === TOTAL - 1 ? CAKE_PAGE_HEART_OPACITY : undefined}
       />
       <MusicToggle />
 
-      <nav className="fixed left-3 top-3 z-50 flex min-h-11 items-center gap-1.5" aria-label="页码">
+      <nav
+        data-page-chrome=""
+        className="fixed left-3 top-3 z-50 flex min-h-11 items-center gap-1.5"
+        aria-label="页码"
+      >
         {Array.from({ length: TOTAL }, (_, i) => (
           <span
             key={i}
@@ -57,10 +63,9 @@ export function BirthdayCard() {
       >
         <div key={step} className="animate-page-in">
           {step === 0 && <IntroPage onNext={next} />}
-          {step === 1 && <ArchivePage onNext={next} />}
-          {step === 2 && <WishPage onNext={next} />}
-          {step === 3 && <RoutePage onNext={next} />}
-          {step === 4 && <CakePage />}
+          {step === 1 && <WishPage onNext={next} />}
+          {step === 2 && <RoutePage onNext={next} />}
+          {step === 3 && <CakePage />}
         </div>
       </main>
     </div>

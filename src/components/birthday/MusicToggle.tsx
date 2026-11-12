@@ -29,6 +29,7 @@ export function MusicToggle() {
       type="button"
       onClick={toggle}
       aria-pressed={playing}
+      data-page-chrome=""
       className="chalk-chip fixed right-3 top-3 z-50 max-w-[62vw] text-left"
     >
       {playing ? (

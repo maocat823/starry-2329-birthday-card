@@ -9,11 +9,56 @@ export function particleCakeOptions(text: string, isMobile: boolean) {
   return {
     text,
     // Passing particleCount overrides the library's own phone reduction, so pick it here.
-    particleCount: isMobile ? 5000 : 15000,
+    // Phones stay inside the 8000–10000 budget the bloom pass can afford.
+    particleCount: isMobile ? 9000 : 15000,
+    // Small points leave gaps between particles, which is what makes the cake read as grain.
+    particleSize: isMobile ? 1.2 : 2,
     textSize: 150,
     candleColor: "#FFD700",
   };
 }
+
+/** Three stacked tiers plus candles: the shares are of the whole particle budget. */
+export const CAKE_STRUCTURE = {
+  tiers: [
+    { share: 0.5, radius: 100, height: 40, baseY: -50 },
+    { share: 0.3, radius: 70, height: 34, baseY: -10 },
+    { share: 0.15, radius: 45, height: 30, baseY: 24 },
+  ],
+  candleCount: 5,
+  candle: { ringRadius: 24, radius: 3.4, height: 48 },
+  /** Each flame is its own little particle plume, not a static cone. */
+  flamesPerCandle: { desktop: 30, mobile: 20 },
+} as const;
+
+/** UnrealBloomPass settings; kept low so the cake keeps its silhouette instead of a white blob. */
+export const CAKE_BLOOM = {
+  threshold: 0.05,
+  strength: 1.0,
+  mobileStrength: 0.8,
+  radius: 0.5,
+} as const;
+
+/** Additive particles at full opacity stack to pure white; halve them instead. */
+export const CAKE_PARTICLE_OPACITY = 0.45;
+
+/** The whole cake breathes on the Y axis so even a paused frame feels alive. */
+export const CAKE_BOB = { amplitude: 2.5, periodMs: 4000 } as const;
+
+/**
+ * Drag-to-orbit settings for the 3D cake (three r128 OrbitControls).
+ * The cake stays the hero: no panning, no pinch zoom, just looking around it.
+ */
+export const CAKE_ORBIT = {
+  /** vertical drag limits in degrees; 60° keeps the view above the plate, 100° stops under it */
+  minPolarDeg: 60,
+  maxPolarDeg: 100,
+  /** 0–1: lower glides longer after the finger leaves the screen (damping) */
+  damping: 0.06,
+  rotateSpeed: 0.55,
+  /** OrbitControls treats 2 as one turn per 30s, so 0.8 is a slow ~75s idle turn */
+  autoRotateSpeed: 0.8,
+} as const;
 
 /** Blow-out sequence, in ms from the button tap. */
 export const CAKE_TIMELINE = {

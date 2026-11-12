@@ -13,24 +13,6 @@ export const intro = {
   signed: "签收成功 · 排面已到账",
 };
 
-export const archive = {
-  title: "2329班小组档案",
-  hint: "点纸条翻面，再点翻回",
-  cards: [
-    { front: "小组日常", back: "大哥坐镇，小弟说笑，老师一回头，全员静音。" },
-    {
-      front: "经典场面",
-      back: "某次讨论跑题，大哥一句话把全组带偏，最后大家一起笑到停不下来。",
-    },
-    { front: "小弟评语", back: "人狠话不多，笑点最低；嘴上嫌弃，关键时刻最靠谱。" },
-    { front: "后来", back: "2329班散了，小组群可能安静了，但大哥的生日排面不能少。" },
-    {
-      front: "后来 · 大学篇",
-      back: "2329班散了，小组群可能安静了。但大哥从宁远一中一路当到财院，排面不能少。小弟在长沙工业学院，负责跨校送达。",
-    },
-  ],
-};
-
 export const wish = {
   title: "小弟有话说",
   letter: `大哥：
@@ -70,11 +52,16 @@ export const route = {
 export const cake = {
   title: "大哥的生日蛋糕",
   particleText: "大哥生日快乐",
-  stageLabel: "一个缓慢旋转的3D粒子生日蛋糕，吹灭蜡烛后会炸成烟花，再拼出“大哥生日快乐”",
+  stageLabel:
+    "一个缓慢旋转的3D粒子生日蛋糕，可以用手指或鼠标拖动环绕查看，吹灭蜡烛后会炸成烟花，再拼出“大哥生日快乐”",
   loading: "蛋糕正在端上来……",
   loadError: "3D 蛋糕没端上来（网络有点慢），祝福照样送到。",
   relit: "蜡烛重新点上了……",
   cta: "大哥，许个愿，然后吹蜡烛。",
+  dragHint: "拖动屏幕，绕着蛋糕转一圈",
+  fullscreen: "全屏",
+  exitFullscreen: "退出全屏",
+  fullscreenLabel: "进入全屏录制，只留下蛋糕和祝福文字",
   message: [
     "大哥，生日快乐！",
     "从宁远一中2329班到湖南财经学院，",
