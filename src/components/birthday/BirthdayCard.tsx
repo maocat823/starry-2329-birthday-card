@@ -3,6 +3,7 @@ import { ArchivePage, CakePage, IntroPage, RoutePage, WishPage } from "./pages";
 import { FloatingHearts } from "./FloatingHearts";
 import { MusicToggle } from "./MusicToggle";
 import { cn } from "@/lib/utils";
+import { CAKE_PAGE_HEART_OPACITY } from "@/lib/hearts";
 
 const TOTAL = 5;
 const FADE_MS = 320;
@@ -27,7 +28,10 @@ export function BirthdayCard() {
   return (
     <div className="relative min-h-dvh">
       <div className="chalkboard fixed inset-0 -z-10" aria-hidden="true" />
-      <FloatingHearts base={step === TOTAL - 1 ? 18 : 8} />
+      <FloatingHearts
+        base={step === TOTAL - 1 ? 18 : 8}
+        opacity={step === TOTAL - 1 ? CAKE_PAGE_HEART_OPACITY : undefined}
+      />
       <MusicToggle />
 
       <nav className="fixed left-3 top-3 z-50 flex min-h-11 items-center gap-1.5" aria-label="页码">

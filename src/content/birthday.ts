@@ -69,7 +69,11 @@ export const route = {
 
 export const cake = {
   title: "大哥的生日蛋糕",
-  plate: "2329 → 财院",
+  particleText: "大哥生日快乐",
+  stageLabel: "一个缓慢旋转的3D粒子生日蛋糕，吹灭蜡烛后会炸成烟花，再拼出“大哥生日快乐”",
+  loading: "蛋糕正在端上来……",
+  loadError: "3D 蛋糕没端上来（网络有点慢），祝福照样送到。",
+  relit: "蜡烛重新点上了……",
   cta: "大哥，许个愿，然后吹蜡烛。",
   message: [
     "大哥，生日快乐！",

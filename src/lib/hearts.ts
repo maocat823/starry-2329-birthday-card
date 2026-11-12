@@ -6,6 +6,9 @@ export function heartCount(base: number, isMobile: boolean): number {
 /** Background hearts must stay subtle: opacity within 0.3–0.5. */
 export const BACKGROUND_HEART_OPACITY = { min: 0.3, max: 0.5 } as const;
 
+/** On the cake page hearts drop to this so they never compete with the 3D cake. */
+export const CAKE_PAGE_HEART_OPACITY = 0.25;
+
 export function randomBetween(min: number, max: number) {
   return min + Math.random() * (max - min);
 }

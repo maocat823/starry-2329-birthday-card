@@ -5,7 +5,8 @@ import { ChalkHeart } from "./ChalkHeart";
 import { FlipCard } from "./FlipCard";
 import { RemarkCard } from "./RemarkCard";
 import { HeartBurst } from "./HeartBurst";
-import { CakeCanvas } from "./CakeCanvas";
+import { ParticleCakeStage, type CakeStageHandle } from "./ParticleCakeStage";
+import { CAKE_TIMELINE } from "@/lib/cake-config";
 import { archive, cake, intro, route, wish } from "@/content/birthday";
 import { useIsPhone, useReducedMotion } from "@/hooks/use-media";
 import { cycle, heartCount } from "@/lib/hearts";
@@ -277,17 +278,10 @@ export function RoutePage({ onNext }: PageProps) {
 
 export function CakePage() {
   const reduced = useReducedMotion();
-  const phone = useIsPhone();
+  const stage = useRef<CakeStageHandle>(null);
   const [blown, setBlown] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [burst, setBurst] = useState<{
-    id: number;
-    x: number;
-    y: number;
-    spread: number;
-    fall: number;
-  } | null>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const msgRef = useRef<HTMLDivElement>(null);
 
@@ -297,31 +291,19 @@ export function CakePage() {
   const blow = () => {
     setBlown(true);
     setBusy(false);
-    if (!reduced) {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      setBurst({
-        id: Date.now(),
-        x: w / 2,
-        y: h / 2,
-        spread: Math.min(w, h) * 0.6,
-        fall: h * 0.5,
-      });
-    }
-    later(
-      () => {
-        setShowMsg(true);
-        later(
-          () =>
-            msgRef.current?.scrollIntoView({
-              behavior: reduced ? "auto" : "smooth",
-              block: "center",
-            }),
-          60,
-        );
-      },
-      reduced ? 0 : 900,
-    );
+    stage.current?.snuff();
+    later(() => stage.current?.explode(), CAKE_TIMELINE.explodeAt);
+    later(() => {
+      setShowMsg(true);
+      later(
+        () =>
+          msgRef.current?.scrollIntoView({
+            behavior: reduced ? "auto" : "smooth",
+            block: "nearest",
+          }),
+        60,
+      );
+    }, CAKE_TIMELINE.messageAt);
   };
 
   const replay = () => {
@@ -329,33 +311,30 @@ export function CakePage() {
     timers.current = [];
     setShowMsg(false);
     setBlown(false);
-    setBurst(null);
     setBusy(true);
+    stage.current?.reset();
     window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
-    later(blow, 1400);
+    later(blow, CAKE_TIMELINE.replayBlowAt);
   };
-
-  const clearBurst = useCallback(() => setBurst(null), []);
 
   return (
     <section className="flex flex-col items-center gap-6">
       <ChalkTitle className="text-center">{cake.title}</ChalkTitle>
 
-      <div className="w-full max-w-[400px]">
-        <CakeCanvas
-          blown={blown}
-          reducedMotion={reduced}
-          plateText={cake.plate}
-          label={`一个星空风格的两层生日蛋糕，插着五根蜡烛，牌子上写着“${cake.plate}”`}
-        />
-      </div>
+      <ParticleCakeStage
+        ref={stage}
+        text={cake.particleText}
+        label={cake.stageLabel}
+        loadingText={cake.loading}
+        errorText={cake.loadError}
+      />
 
       {!blown && !busy && (
         <button type="button" onClick={blow} className="chalk-btn chalk-btn-solid px-7 text-lg">
           {cake.cta}
         </button>
       )}
-      {busy && <p className="chalk-text font-chalk text-lg opacity-80">蜡烛重新点上了……</p>}
+      {busy && <p className="chalk-text font-chalk text-lg opacity-80">{cake.relit}</p>}
 
       {showMsg && (
         <div
@@ -381,20 +360,6 @@ export function CakePage() {
           <RotateCcw className="size-4" aria-hidden="true" />
           {cake.replay}
         </button>
-      )}
-
-      {burst && (
-        <HeartBurst
-          key={burst.id}
-          x={burst.x}
-          y={burst.y}
-          count={heartCount(36, phone)}
-          spread={burst.spread}
-          fall={burst.fall}
-          duration={[3.6, 5.4]}
-          size={[20, 40]}
-          onDone={clearBurst}
-        />
       )}
     </section>
   );

@@ -23,7 +23,7 @@ type Heart = {
 };
 
 /** Slow, low-opacity chalk hearts drifting down behind the content. */
-export function FloatingHearts({ base }: { base: number }) {
+export function FloatingHearts({ base, opacity }: { base: number; opacity?: number }) {
   const reduced = useReducedMotion();
   const phone = useIsPhone();
   const [hearts, setHearts] = useState<Heart[]>([]);
@@ -43,13 +43,13 @@ export function FloatingHearts({ base }: { base: number }) {
           size: randomBetween(18, 36),
           dur,
           delay: randomBetween(0, dur),
-          op: randomBetween(BACKGROUND_HEART_OPACITY.min, BACKGROUND_HEART_OPACITY.max),
+          op: opacity ?? randomBetween(BACKGROUND_HEART_OPACITY.min, BACKGROUND_HEART_OPACITY.max),
           sway: randomBetween(-40, 40),
           color: cycle(COLORS, i),
         };
       }),
     );
-  }, [base, phone, reduced]);
+  }, [base, opacity, phone, reduced]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">

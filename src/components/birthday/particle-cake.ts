@@ -24,7 +24,7 @@ export type CakeOptions = {
 
 type Attr = { array: Float32Array; needsUpdate: boolean };
 type Geometry = {
-  attributes: Record<string, Attr>;
+  attributes: { position?: Attr; color?: Attr };
   setAttribute(name: string, attr: unknown): void;
   dispose(): void;
 };
@@ -211,7 +211,7 @@ function makeClass(THREE: ThreeNS, Base: ParticleCakeCtor, flameFadeMs: number) 
      * and sizes it for a full-screen container. Draw on a canvas sized to the text instead
      * and scale it to fit the container width.
      */
-    generateText() {
+    override generateText() {
       const { text, textSize, fontFamily, particleCount, textScale } = this.config;
       const font = `bold ${textSize}px ${fontFamily}`;
       const canvas = document.createElement("canvas");
@@ -258,7 +258,7 @@ function makeClass(THREE: ThreeNS, Base: ParticleCakeCtor, flameFadeMs: number) 
       }
     }
 
-    destroy() {
+    override destroy() {
       this.scene.remove(this.smoke);
       this.smokeGeo.dispose();
       this.smokeMat.dispose();
