@@ -3,6 +3,7 @@ import { CakePage, IntroPage, RoutePage, WishPage } from "./pages";
 import { FloatingHearts } from "./FloatingHearts";
 import { MusicToggle } from "./MusicToggle";
 import { ParticleField } from "./ParticleField";
+import { useMusicPlayer } from "@/hooks/use-music-player";
 import { cn } from "@/lib/utils";
 import { CAKE_PAGE_HEART_OPACITY } from "@/lib/hearts";
 
@@ -13,6 +14,7 @@ export function BirthdayCard() {
   const [step, setStep] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const music = useMusicPlayer();
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -24,17 +26,26 @@ export function BirthdayCard() {
       setLeaving(false);
     }, FADE_MS);
   };
-  const next = () => goTo(Math.min(step + 1, TOTAL - 1));
+  const next = () => {
+    const target = Math.min(step + 1, TOTAL - 1);
+    if (target === TOTAL - 1 && target !== step) {
+      // The click is the user gesture that lets the song and native fullscreen start.
+      void music.play();
+      const request = document.documentElement.requestFullscreen?.();
+      if (request) request.catch(() => undefined);
+    }
+    goTo(target);
+  };
 
   return (
     <div className="relative min-h-dvh">
-      <div className="chalkboard fixed inset-0 -z-10" aria-hidden="true" />
+      <div className="starry-sky fixed inset-0 -z-10" aria-hidden="true" />
       {step === 0 && <ParticleField />}
       <FloatingHearts
         base={step === TOTAL - 1 ? 18 : 8}
         opacity={step === TOTAL - 1 ? CAKE_PAGE_HEART_OPACITY : undefined}
       />
-      <MusicToggle />
+      <MusicToggle playing={music.playing} onToggle={() => void music.toggle()} />
 
       <nav
         data-page-chrome=""
@@ -61,7 +72,7 @@ export function BirthdayCard() {
           leaving ? "opacity-0" : "opacity-100",
         )}
       >
-        <div key={step} className="animate-page-in">
+        <div key={step} className={step === TOTAL - 1 ? undefined : "animate-page-in"}>
           {step === 0 && <IntroPage onNext={next} />}
           {step === 1 && <WishPage onNext={next} />}
           {step === 2 && <RoutePage onNext={next} />}

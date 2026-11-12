@@ -594,7 +594,7 @@ function makeClass(
         );
         composer.addPass(bloom);
         // UnrealBloomPass composites with an opaque alpha, which paints a black rectangle
-        // over the chalkboard. Rebuild alpha from the final luminance so empty pixels stay
+        // over the page background. Rebuild alpha from the final luminance so empty pixels stay
         // transparent and only the cake/glow is visible.
         const alphaPass = new three.ShaderPass({
           uniforms: { tDiffuse: { value: null } },

@@ -73,6 +73,6 @@ export const cake = {
 };
 
 export const music = {
-  off: "点这里，有一首你肯定听过的歌",
-  on: "正在播放 · 再点暂停",
+  play: "播放网站音乐",
+  pause: "暂停网站音乐",
 };

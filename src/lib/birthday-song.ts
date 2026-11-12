@@ -1,5 +1,5 @@
-// "Happy Birthday to You" (public domain), played as a soft music box via Web Audio.
-// No audio file needed; nothing plays until the user taps the music button.
+// "Ode to Joy" (Beethoven, public domain), played as a soft music box via Web Audio.
+// No audio file needed; nothing plays until the user taps the music button or the cake arrives.
 
 const N = {
   G4: 392.0,
@@ -16,11 +16,23 @@ type Step = [freq: number | null, beats: number];
 
 // prettier-ignore
 const SONG: [Step, ...Step[]] = [
-  [N.G4, 0.75], [N.G4, 0.25], [N.A4, 1], [N.G4, 1], [N.C5, 1], [N.B4, 2],
-  [N.G4, 0.75], [N.G4, 0.25], [N.A4, 1], [N.G4, 1], [N.D5, 1], [N.C5, 2],
-  [N.G4, 0.75], [N.G4, 0.25], [N.G5, 1], [N.E5, 1], [N.C5, 1], [N.B4, 1], [N.A4, 2],
-  [N.F5, 0.75], [N.F5, 0.25], [N.E5, 1], [N.C5, 1], [N.D5, 1], [N.C5, 3],
-  [null, 3],
+  [N.E5, 1], [N.E5, 1], [N.F5, 1], [N.G5, 1],
+  [N.G5, 1], [N.F5, 1], [N.E5, 1], [N.D5, 1],
+  [N.C5, 1], [N.C5, 1], [N.D5, 1], [N.E5, 1],
+  [N.E5, 1.5], [N.D5, 0.5], [N.D5, 2],
+  [N.E5, 1], [N.E5, 1], [N.F5, 1], [N.G5, 1],
+  [N.G5, 1], [N.F5, 1], [N.E5, 1], [N.D5, 1],
+  [N.C5, 1], [N.C5, 1], [N.D5, 1], [N.E5, 1],
+  [N.D5, 1.5], [N.C5, 0.5], [N.C5, 2],
+  [N.D5, 1], [N.D5, 1], [N.E5, 1], [N.C5, 1],
+  [N.D5, 1], [N.E5, 0.5], [N.F5, 0.5], [N.E5, 1], [N.C5, 1],
+  [N.D5, 1], [N.E5, 0.5], [N.F5, 0.5], [N.E5, 1], [N.D5, 1],
+  [N.C5, 1], [N.D5, 1], [N.G4, 2],
+  [N.E5, 1], [N.E5, 1], [N.F5, 1], [N.G5, 1],
+  [N.G5, 1], [N.F5, 1], [N.E5, 1], [N.D5, 1],
+  [N.C5, 1], [N.C5, 1], [N.D5, 1], [N.E5, 1],
+  [N.D5, 1.5], [N.C5, 0.5], [N.C5, 2],
+  [null, 2],
 ];
 
 const BEAT = 0.5; // seconds per beat

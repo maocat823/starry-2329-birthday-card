@@ -84,7 +84,7 @@ export function ParticleField() {
 
     const paint = (dt: number) => {
       ctx.clearRect(0, 0, width, height);
-      // Additive dots on a transparent canvas read as light dust on the chalkboard.
+      // Additive dots on a transparent canvas read as light dust on the night sky.
       ctx.globalCompositeOperation = "lighter";
       for (const p of particles) {
         p.y -= p.rise * dt;

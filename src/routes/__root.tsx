@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#1f3a2f" },
+      { name: "theme-color", content: "#0b1230" },
       { name: "robots", content: "noindex, nofollow" },
       { title: "大哥的生日排面" },
       { name: "description", content: "2329班小组内部通知（大学版）" },
@@ -89,6 +89,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/backgrounds/starry-sky.webp",
+        type: "image/webp",
+        media: "(min-width: 768px)",
+      },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/backgrounds/starry-sky-mobile.webp",
+        type: "image/webp",
+        media: "(max-width: 767px)",
+      },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700&family=ZCOOL+KuaiLe&display=swap",

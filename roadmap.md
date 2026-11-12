@@ -1,6 +1,6 @@
 # Roadmap
 
-- [x] Build 4-page chalkboard birthday card (notice, letter, route, cake)
+- [x] Build 4-page birthday card (notice, letter, route, cake)
 - [x] Drop the 小组档案 flip-card page from the flow
 - [x] Review user's reference screen recording and adapt the cake style to it
 - [x] Replace the 2D cake with the 3D particle-cake
@@ -9,3 +9,5 @@
 - [x] Soft glow around the cake; explosion colors layer from warm gold out to red, violet and blue
 - [x] Full-screen warm dust layer on the entry page (3000 points, halved on phones) with a Framer Motion chalk-fade title
 - [x] Three-tier particle sculpture with five live candle plumes, warm palette and UnrealBloom glow
+- [x] Ode to Joy music box, auto fullscreen + music when the cake arrives, circular icon-only music toggle
+- [x] Replace the chalkboard background with the starry-sky artwork (desktop + portrait mobile WebP)

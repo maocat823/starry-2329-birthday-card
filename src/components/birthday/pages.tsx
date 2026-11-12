@@ -262,7 +262,9 @@ export function CakePage() {
   const [blown, setBlown] = useState(false);
   const [showMsg, setShowMsg] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [full, setFull] = useState(false);
+  // The cake arrives already in recording mode; the navigation click requests native
+  // fullscreen, and this overlay guarantees the same frame when the browser refuses it.
+  const [full, setFull] = useState(true);
   const [chrome, setChrome] = useState(true);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const chromeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -279,7 +281,9 @@ export function CakePage() {
 
   // Keep the overlay in sync with native fullscreen, including Esc and the browser's own UI.
   useEffect(() => {
-    const sync = () => setFull(document.fullscreenElement === shell.current);
+    // Native fullscreen may be the card root (requested from the navigation click) or this
+    // section; either way the cake should keep its full-screen overlay.
+    const sync = () => setFull(Boolean(document.fullscreenElement));
     document.addEventListener("fullscreenchange", sync);
     return () => {
       document.removeEventListener("fullscreenchange", sync);
