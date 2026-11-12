@@ -461,3 +461,13 @@
     }
   }
 }
+
+/* dark pool behind the 3D particle cake so the additive particles read on the board */
+@utility cake-stage {
+  background: radial-gradient(
+    ellipse 62% 58% at 50% 52%,
+    oklch(0.14 0.03 168 / 0.92),
+    oklch(0.18 0.035 166 / 0.55) 55%,
+    transparent 78%
+  );
+}
