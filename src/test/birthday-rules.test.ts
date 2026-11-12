@@ -3,6 +3,7 @@ import { BACKGROUND_HEART_OPACITY, CAKE_PAGE_HEART_OPACITY, heartCount } from "@
 import {
   CAKE_BLOOM,
   CAKE_BOB,
+  CAKE_HEARTS,
   CAKE_ORBIT,
   CAKE_PARTICLE_OPACITY,
   CAKE_STRUCTURE,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/cake-config";
 import { CAKE_PALETTE, hexToHsl, mixHsl } from "@/lib/cake-palette";
 import { PARTICLE_FIELD_ALPHA, PARTICLE_FIELD_COUNT, particleFieldCount } from "@/lib/particles";
+import { cake } from "@/content/birthday";
 import { Route } from "@/routes/index";
 
 describe("birthday card rules", () => {
@@ -106,5 +108,23 @@ describe("birthday card rules", () => {
     expect(gold.s).toBeCloseTo(0.646, 2);
     expect(gold.l).toBeCloseTo(0.5235, 2);
     expect(mixHsl(gold, gold, 0.5)).toEqual(gold);
+  });
+
+  it("fills the heart with twenty blessing popups", () => {
+    expect(cake.heartBlessings).toHaveLength(CAKE_HEARTS.count);
+    expect(CAKE_HEARTS.count).toBeGreaterThanOrEqual(20);
+    expect(CAKE_HEARTS.count).toBeLessThanOrEqual(30);
+  });
+
+  it("keeps the blessing note after the heart sequence fades", () => {
+    const sequenceEnd =
+      CAKE_TIMELINE.explodeAt +
+      CAKE_TIMELINE.textFormsAfter +
+      CAKE_HEARTS.settleMs +
+      CAKE_HEARTS.drawMs +
+      (CAKE_HEARTS.count - 1) * CAKE_HEARTS.popEveryMs +
+      CAKE_HEARTS.holdMs +
+      CAKE_HEARTS.fadeMs;
+    expect(CAKE_TIMELINE.messageAt).toBeGreaterThan(sequenceEnd);
   });
 });

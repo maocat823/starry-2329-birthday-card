@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { ChalkHeart } from "./ChalkHeart";
 import { useIsPhone, useReducedMotion } from "@/hooks/use-media";
 import { BACKGROUND_HEART_OPACITY, cycle, heartCount, randomBetween } from "@/lib/hearts";
+import { cn } from "@/lib/utils";
 
 const COLORS: [string, ...string[]] = [
   "text-chalk",
@@ -22,8 +23,16 @@ type Heart = {
   color: string;
 };
 
-/** Slow, low-opacity chalk hearts drifting down behind the content. */
-export function FloatingHearts({ base, opacity }: { base: number; opacity?: number | undefined }) {
+/** Slow, low-opacity chalk hearts drifting down. On the cake page they float above the stage. */
+export function FloatingHearts({
+  base,
+  opacity,
+  foreground = false,
+}: {
+  base: number;
+  opacity?: number | undefined;
+  foreground?: boolean;
+}) {
   const reduced = useReducedMotion();
   const phone = useIsPhone();
   const [hearts, setHearts] = useState<Heart[]>([]);
@@ -52,7 +61,14 @@ export function FloatingHearts({ base, opacity }: { base: number; opacity?: numb
   }, [base, opacity, phone, reduced]);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
+    <div
+      data-page-chrome={foreground ? "" : undefined}
+      className={cn(
+        "pointer-events-none fixed inset-0 overflow-hidden",
+        foreground ? "z-20" : "z-0",
+      )}
+      aria-hidden="true"
+    >
       {hearts.map((h) => (
         <span
           key={h.id}

@@ -60,6 +60,23 @@ export const CAKE_ORBIT = {
   autoRotateSpeed: 0.8,
 } as const;
 
+/**
+ * Heart blessing popups that play once the particle text has been still for a second.
+ * Twenty cards at 0.3s each, then a 2.5s hold and a shared fade out.
+ */
+export const CAKE_HEARTS = {
+  /** the text must sit still this long before the sequence starts */
+  settleMs: 1000,
+  /** dashed chalk heart draws over this long */
+  drawMs: 800,
+  /** one popup appears every this many ms, clockwise from the top */
+  popEveryMs: 300,
+  count: 20,
+  /** all popups stay on screen this long before fading together */
+  holdMs: 2500,
+  fadeMs: 600,
+} as const;
+
 /** Blow-out sequence, in ms from the button tap. */
 export const CAKE_TIMELINE = {
   /** flame particles dim to nothing over this long; smoke rises meanwhile */
@@ -68,8 +85,8 @@ export const CAKE_TIMELINE = {
   explodeAt: 1500,
   /** particle-cake turns the firework into text this long after explode() */
   textFormsAfter: 2000,
-  /** blessing note appears once the text has gathered */
-  messageAt: 4200,
+  /** blessing note waits for the heart sequence to finish (and give the stage a beat) */
+  messageAt: 14800,
   /** "重新播放": cake re-forms, then blows out again after this long */
   replayBlowAt: 2200,
 } as const;

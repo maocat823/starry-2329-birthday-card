@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Mail, Maximize2, Minimize2, RotateCcw } from "lucide-react";
 import { ChalkTitle } from "./ChalkTitle";
 import { RemarkCard } from "./RemarkCard";
 import { ParticleCakeStage, type CakeStageHandle } from "./ParticleCakeStage";
+import { HeartPopupSequence } from "./HeartPopupSequence";
 import { CAKE_TIMELINE } from "@/lib/cake-config";
 import { cake, intro, route, wish } from "@/content/birthday";
 import { useIsPhone, useReducedMotion } from "@/hooks/use-media";
@@ -224,10 +225,10 @@ export function CakePage() {
   // Fullscreen is opt-in: the cake page opens in the normal page layout, and the button
   // on the stage (or Esc) toggles recording mode.
   const [full, setFull] = useState(false);
+  const [showPopups, setShowPopups] = useState(false);
   const [chrome, setChrome] = useState(true);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const chromeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const msgRef = useRef<HTMLDivElement>(null);
 
   useEffect(
     () => () => {
@@ -237,6 +238,8 @@ export function CakePage() {
     [],
   );
   const later = (fn: () => void, ms: number) => timers.current.push(setTimeout(fn, ms));
+  const textSettled = useCallback(() => setShowPopups(true), []);
+  const popupsDone = useCallback(() => setShowPopups(false), []);
 
   // Keep the overlay in sync with native fullscreen, including Esc and the browser's own UI.
   useEffect(() => {
@@ -313,25 +316,18 @@ export function CakePage() {
   const blow = () => {
     setBlown(true);
     setBusy(false);
+    setShowPopups(false);
     stage.current?.snuff();
     later(() => stage.current?.explode(), CAKE_TIMELINE.explodeAt);
-    later(() => {
-      setShowMsg(true);
-      later(
-        () =>
-          msgRef.current?.scrollIntoView({
-            behavior: reduced ? "auto" : "smooth",
-            block: "nearest",
-          }),
-        60,
-      );
-    }, CAKE_TIMELINE.messageAt);
+    // The note lands after the heart sequence fades; it no longer scrolls the stage away.
+    later(() => setShowMsg(true), CAKE_TIMELINE.messageAt);
   };
 
   const replay = () => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
     setShowMsg(false);
+    setShowPopups(false);
     setBlown(false);
     setBusy(true);
     stage.current?.reset();
@@ -362,7 +358,11 @@ export function CakePage() {
           loadingText={cake.loading}
           errorText={cake.loadError}
           fullscreen={full}
+          onTextSettled={textSettled}
         />
+        <AnimatePresence>
+          {showPopups && <HeartPopupSequence onDone={popupsDone} />}
+        </AnimatePresence>
         <button
           type="button"
           onClick={toggleFullscreen}
@@ -409,10 +409,7 @@ export function CakePage() {
       )}
 
       {showMsg && !full && (
-        <div
-          ref={msgRef}
-          className="flex w-full max-w-md animate-page-in flex-col items-center gap-5"
-        >
+        <div className="flex w-full max-w-md animate-page-in flex-col items-center gap-5">
           <div className="paper-note w-full -rotate-1 px-6 pb-6 pt-8 text-center">
             <p className="font-chalk text-3xl text-stamp">{cake.message[0]}</p>
             <div className="mt-4 space-y-1.5 text-base leading-relaxed text-paper-ink">

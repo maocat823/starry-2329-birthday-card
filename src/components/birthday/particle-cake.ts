@@ -6,6 +6,7 @@
 import {
   CAKE_BLOOM,
   CAKE_BOB,
+  CAKE_HEARTS,
   CAKE_ORBIT,
   CAKE_PARTICLE_OPACITY,
   CAKE_STRUCTURE,
@@ -307,6 +308,7 @@ function makeClass(
   Base: ParticleCakeCtor,
   flameFadeMs: number,
   autoRotate: boolean,
+  onTextSettled?: () => void,
 ) {
   return class Cake extends Base {
     private controls: OrbitControls;
@@ -314,6 +316,9 @@ function makeClass(
     private bloom: BloomPass | null = null;
     private composing = false;
     private autoRotate: boolean;
+    private onTextSettled: (() => void) | undefined;
+    private textAt: number | null = null;
+    private textSettledFired = false;
     private pressing = false;
     private recenter = false;
     private previousState: ParticleCakeBase["currentState"] = "CAKE";
@@ -358,6 +363,7 @@ function makeClass(
       this.scene.add(this.smoke);
 
       this.autoRotate = autoRotate;
+      this.onTextSettled = onTextSettled;
       this.hueJitter = new Float32Array(this.types.length);
       this.lightJitter = new Float32Array(this.types.length);
 
@@ -628,6 +634,8 @@ function makeClass(
       this.smokeAt = null;
       this.recenter = false;
       this.previousState = "CAKE";
+      this.textAt = null;
+      this.textSettledFired = false;
       this.buildCake();
       this.drawSmoke(0);
     }
@@ -646,6 +654,8 @@ function makeClass(
     override explode() {
       super.explode();
       this.previousState = "FIREWORK";
+      this.textAt = null;
+      this.textSettledFired = false;
       this.fireworkAt = performance.now();
       this.recenter = true;
       this.seedExplosionJitter();
@@ -676,6 +686,15 @@ function makeClass(
       if (this.smokeAt !== null) this.drawSmoke(now - this.smokeAt);
       if (state === "FIREWORK") this.paintFirework(now - this.fireworkAt);
       if (state === "CAKE") this.paintFlames(now);
+
+      // Give the gathered text a full second of stillness before the heart sequence starts.
+      if (state === "TEXT") {
+        if (this.textAt === null) this.textAt = now;
+        if (!this.textSettledFired && now - this.textAt >= CAKE_HEARTS.settleMs) {
+          this.textSettledFired = true;
+          this.onTextSettled?.();
+        }
+      }
 
       // The library spins the points; the orbit replaces that spin so the camera can glide
       // around the cake and pause wherever the viewer left it.
@@ -900,6 +919,7 @@ export async function createParticleCake(
   opts: CakeOptions,
   flameFadeMs: number,
   autoRotate = true,
+  onTextSettled?: () => void,
 ): Promise<ChalkParticleCake> {
   const [{ THREE, Base }] = await Promise.all([
     loadLibs(),
@@ -911,6 +931,6 @@ export async function createParticleCake(
         ]).catch(() => undefined)
       : Promise.resolve(),
   ]);
-  const Cake = makeClass(THREE, Base, flameFadeMs, autoRotate);
+  const Cake = makeClass(THREE, Base, flameFadeMs, autoRotate, onTextSettled);
   return new Cake(el, opts);
 }

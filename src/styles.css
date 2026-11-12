@@ -558,3 +558,39 @@ body[data-cinema="on"] [data-page-chrome] {
   opacity: 0;
   pointer-events: none;
 }
+
+/* ---------- cake-page heart blessing popups ---------- */
+
+/* Invisible positioning wrappers; offset-path / offset-distance are set inline per card. */
+.heart-popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  offset-anchor: center;
+  offset-rotate: 0deg;
+  pointer-events: none;
+}
+
+/* The card scales on the inner element, so Framer's transform never fights offset-path. */
+.heart-popup-card {
+  padding: 0.18rem 0.34rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  background-color: rgba(20, 30, 25, 0.9);
+  color: var(--chalk);
+  font-family: var(--font-chalk);
+  font-size: clamp(0.46rem, 1vw, 0.62rem);
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 2px 8px -4px rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(3px);
+}
+
+@media (max-width: 767px) {
+  .heart-popup-card {
+    padding: 0.15rem 0.28rem;
+    font-size: 0.46rem;
+  }
+}

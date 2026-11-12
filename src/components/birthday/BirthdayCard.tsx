@@ -42,6 +42,7 @@ export function BirthdayCard() {
       <FloatingHearts
         base={step === TOTAL - 1 ? 18 : 8}
         opacity={step === TOTAL - 1 ? CAKE_PAGE_HEART_OPACITY : undefined}
+        foreground={step === TOTAL - 1}
       />
       <MusicToggle playing={music.playing} onToggle={() => void music.toggle()} />
 

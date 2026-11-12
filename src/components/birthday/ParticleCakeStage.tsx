@@ -12,6 +12,7 @@ type Props = {
   loadingText: string;
   errorText: string;
   fullscreen?: boolean;
+  onTextSettled?: () => void;
 };
 
 const FONT = '"ZCOOL KuaiLe", "Noto Sans SC", "PingFang SC", sans-serif';
@@ -24,10 +25,16 @@ export function ParticleCakeStage({
   loadingText,
   errorText,
   fullscreen = false,
+  onTextSettled,
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const cake = useRef<ChalkParticleCake | null>(null);
+  const settled = useRef(onTextSettled);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    settled.current = onTextSettled;
+  }, [onTextSettled]);
 
   useImperativeHandle(ref, () => ({
     snuff: () => cake.current?.snuff(),
@@ -52,6 +59,7 @@ export function ParticleCakeStage({
           { ...particleCakeOptions(text, isCakeMobile(window.innerWidth)), fontFamily: FONT },
           CAKE_TIMELINE.flameFadeMs,
           !still,
+          () => settled.current?.(),
         ),
       )
       .then((instance) => {
